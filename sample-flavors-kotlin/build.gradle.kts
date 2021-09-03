@@ -5,17 +5,17 @@ plugins {
 }
 
 android {
-    compileSdkVersion(29)
+    compileSdk = 29
     defaultConfig {
         applicationId = "com.osacky.flank.gradle.sample.kotlin"
-        minSdkVersion(23)
-        targetSdkVersion(29)
+        minSdk = 23
+        targetSdk = 29
         versionCode = 1
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     testOptions.execution = "ANDROIDX_TEST_ORCHESTRATOR"
-    flavorDimensions("flavor")
+    flavorDimensions.add("flavor")
 
     productFlavors {
         create("chocolate") {
@@ -25,9 +25,11 @@ android {
             dimension = "flavor"
         }
     }
+}
 
-    onVariants.withName("vanilla") {
-        enabled = false
+androidComponents {
+    beforeVariants(selector().withName("vanillaRelease")) {
+        it.enabled = false
     }
 }
 

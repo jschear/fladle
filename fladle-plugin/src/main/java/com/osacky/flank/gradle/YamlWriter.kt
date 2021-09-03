@@ -1,5 +1,7 @@
 package com.osacky.flank.gradle
 
+import com.android.build.api.variant.BuiltArtifactsLoader
+import org.gradle.api.file.Directory
 import org.gradle.internal.impldep.com.google.common.annotations.VisibleForTesting
 
 internal class YamlWriter {
@@ -8,17 +10,29 @@ internal class YamlWriter {
     if (base.projectId.orNull == null) {
       check(base.serviceAccountCredentials.isPresent) { "ServiceAccountCredentials in fladle extension not set. https://runningcode.github.io/fladle/configuration/#serviceaccountcredentials" }
     }
-    check(base.debugApk.isPresent) { "debugApk must be specified" }
+
+    val debugApk = when {
+      config.debugApk.isPresent -> config.debugApk.get()
+      config.debugApkFolder.isPresent -> config.builtArtifactsLoader.get().resolveApkPath(config.debugApkFolder.get())
+      else -> null
+    }
+    val instrumentationApk = when {
+      config.instrumentationApk.isPresent -> config.instrumentationApk.get()
+      config.instrumentationApkFolder.isPresent -> config.builtArtifactsLoader.get().resolveApkPath(config.instrumentationApkFolder.get())
+      else -> null
+    }
+
+    check(debugApk != null) { "debugApk must be specified" }
     if (!config.sanityRobo.get()) {
-      check(config.instrumentationApk.isPresent xor config.roboScript.isNotPresentOrBlank) {
-        val prefix = if (base.instrumentationApk.isPresent && config.roboScript.isNotPresentOrBlank) {
+      check((instrumentationApk != null) xor config.roboScript.isNotPresentOrBlank) {
+        val prefix = if (instrumentationApk != null && config.roboScript.isNotPresentOrBlank) {
           "Both instrumentationApk file and roboScript file were specified, but only one is expected."
         } else {
           "Must specify either a instrumentationApk file or a roboScript file."
         }
         """
         $prefix
-        instrumentationApk=${config.instrumentationApk.orNull}
+        instrumentationApk=${instrumentationApk}
         roboScript=${config.roboScript.orNull}
         """.trimIndent()
       }
@@ -29,7 +43,7 @@ internal class YamlWriter {
 
     return buildString {
       appendln("gcloud:")
-      appendln("  app: ${config.debugApk.get()}")
+      appendln("  app: ${debugApk}")
       if (config.instrumentationApk.isNotPresentOrBlank) {
         appendln("  test: ${config.instrumentationApk.get()}")
       }
@@ -37,6 +51,15 @@ internal class YamlWriter {
       appendln(additionalProperties)
       append(flankProperties)
     }
+  }
+
+  private fun BuiltArtifactsLoader.resolveApkPath(directory: Directory): String {
+    val builtArtifacts = load(directory)
+    checkNotNull(builtArtifacts) { "Failed to load built artifacts" }
+    return builtArtifacts.elements
+      // TODO: create an API for selecting the correct APK split (for density or ABI).
+      .first()
+      .outputFile
   }
 
   internal fun writeFlankProperties(config: FladleConfig): String = buildString {

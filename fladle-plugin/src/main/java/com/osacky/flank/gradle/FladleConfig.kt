@@ -1,12 +1,15 @@
 package com.osacky.flank.gradle
 
+import com.android.build.api.variant.BuiltArtifactsLoader
 import com.osacky.flank.gradle.validation.SinceFlank
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.PathSensitive
@@ -34,6 +37,22 @@ interface FladleConfig {
   @get:Input
   @get:Optional
   val instrumentationApk: Property<String>
+
+  /**
+   * If [debugApk] or [instrumentationApk] are not specified, they will instead be inferred from
+   * the [variant].
+   */
+  @get:InputFiles
+  @get:Optional
+  val debugApkFolder: DirectoryProperty
+
+  @get:InputFiles
+  @get:Optional
+  val instrumentationApkFolder: DirectoryProperty
+
+  @get:Internal
+  @get:Optional
+  val builtArtifactsLoader: Property<BuiltArtifactsLoader>
 
   @get:Input
   val sanityRobo: Property<Boolean>

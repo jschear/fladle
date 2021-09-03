@@ -1,7 +1,9 @@
 package com.osacky.flank.gradle
 
+import com.android.build.api.variant.BuiltArtifactsLoader
 import groovy.lang.Closure
 import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
@@ -26,7 +28,7 @@ open class FlankGradleExtension @Inject constructor(objects: ObjectFactory) : Fl
   override val sanityRobo: Property<Boolean> = objects.property<Boolean>().convention(false)
 
   @get:Input
-  val flankVersion: Property<String> = objects.property(String::class.java).convention(FLANK_VERSION)
+  val flankVersion: Property<String> = objects.property<String>().convention(FLANK_VERSION)
   // Project id is automatically discovered by default. Use this to override the project id.
   override val projectId: Property<String> = objects.property()
   override val serviceAccountCredentials: RegularFileProperty = objects.fileProperty()
@@ -56,6 +58,12 @@ open class FlankGradleExtension @Inject constructor(objects: ObjectFactory) : Fl
   override val debugApk: Property<String> = objects.property()
 
   override val instrumentationApk: Property<String> = objects.property()
+
+  override val debugApkFolder: DirectoryProperty = objects.directoryProperty()
+
+  override val instrumentationApkFolder: DirectoryProperty = objects.directoryProperty()
+
+  override val builtArtifactsLoader: Property<BuiltArtifactsLoader> = objects.property(BuiltArtifactsLoader::class.java)
 
   override val directoriesToPull: ListProperty<String> = objects.listProperty()
 
@@ -153,6 +161,9 @@ open class FlankGradleExtension @Inject constructor(objects: ObjectFactory) : Fl
       serviceAccountCredentials = objects.fileProperty().convention(serviceAccountCredentials),
       debugApk = objects.property<String>().convention(debugApk),
       instrumentationApk = objects.property<String>().convention(instrumentationApk),
+      debugApkFolder = objects.directoryProperty().convention(debugApkFolder),
+      instrumentationApkFolder = objects.directoryProperty().convention(instrumentationApkFolder),
+      builtArtifactsLoader = objects.property(BuiltArtifactsLoader::class.java).convention(builtArtifactsLoader),
       sanityRobo = objects.property<Boolean>().convention(sanityRobo),
       useOrchestrator = objects.property<Boolean>().convention(useOrchestrator),
       autoGoogleLogin = objects.property<Boolean>().convention(autoGoogleLogin),

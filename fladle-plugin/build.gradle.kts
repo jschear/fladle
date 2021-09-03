@@ -7,7 +7,6 @@ description = "Easily Scale your Android Instrumentation Tests with Firebase Tes
 repositories {
   google()
   mavenCentral()
-  jcenter()
 }
 
 plugins {
@@ -27,9 +26,9 @@ val isReleaseMode : Boolean = hasProperty("fladle.releaseMode")
 dependencies {
   compileOnly(gradleApi())
   if (isReleaseMode) {
-    compileOnly("com.android.tools.build:gradle:4.1.3")
+    compileOnly("com.android.tools.build:gradle:7.0.2")
   } else {
-    implementation("com.android.tools.build:gradle:4.1.3")
+    implementation("com.android.tools.build:gradle:7.0.2")
   }
 
   testImplementation(gradleTestKit())

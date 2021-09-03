@@ -17,10 +17,10 @@ fulladleModuleConfig {
 }
 
 android {
-  compileSdkVersion(29)
+  compileSdk = 29
   defaultConfig {
-    minSdkVersion(23)
-    targetSdkVersion(28)
+    minSdk = 23
+    targetSdk = 28
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
   testOptions.execution = "ANDROIDX_TEST_ORCHESTRATOR"

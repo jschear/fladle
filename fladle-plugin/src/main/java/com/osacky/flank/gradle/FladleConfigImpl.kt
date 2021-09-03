@@ -1,5 +1,7 @@
 package com.osacky.flank.gradle
 
+import com.android.build.api.variant.BuiltArtifactsLoader
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
@@ -12,6 +14,9 @@ data class FladleConfigImpl(
   override val serviceAccountCredentials: RegularFileProperty,
   override val debugApk: Property<String>,
   override val instrumentationApk: Property<String>,
+  override val debugApkFolder: DirectoryProperty,
+  override val instrumentationApkFolder: DirectoryProperty,
+  override val builtArtifactsLoader: Property<BuiltArtifactsLoader>,
   override val sanityRobo: Property<Boolean>,
   override val useOrchestrator: Property<Boolean>,
   override val autoGoogleLogin: Property<Boolean>,

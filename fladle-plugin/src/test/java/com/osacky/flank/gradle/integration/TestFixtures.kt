@@ -12,7 +12,7 @@ internal fun TemporaryFolder.writeBuildDotGradle(buildScript: String) =
   newFile("build.gradle")
     .writeText(buildScript)
 
-fun TemporaryFolder.gradleRunner() =
+fun TemporaryFolder.gradleRunner(): GradleRunner =
   GradleRunner.create()
     .withPluginClasspath()
     .forwardOutput()
